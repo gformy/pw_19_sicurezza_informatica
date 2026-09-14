@@ -1,9 +1,7 @@
-
 -- Blocco del DELETE fisico. RAISE_APPLICATION_ERROR è l'equivalente
 -- Oracle di RAISE EXCEPTION; il codice (-20001) è nell'intervallo
 -- riservato agli errori applicativi definiti dall'utente.
--- A differenza di PostgreSQL, Oracle non espone TG_TABLE_NAME: il nome
--- della tabella va scritto esplicitamente in ciascun trigger.
+
 CREATE OR REPLACE TRIGGER trg_blocca_delete_elementocritico
 BEFORE DELETE ON ElementoCritico
 FOR EACH ROW
@@ -37,17 +35,20 @@ DECLARE
     v_log_id NUMBER;
     v_versione NUMBER;
     v_valido_da TIMESTAMP;
+    v_cambiato NUMBER;
 BEGIN
-    IF DECODE(:OLD.denominazione, :NEW.denominazione, 0, 1) = 1
-       OR DECODE(:OLD.indirizzo_sede_legale, :NEW.indirizzo_sede_legale, 0, 1) = 1
-       OR DECODE(:OLD.pec, :NEW.pec, 0, 1) = 1
-       OR DECODE(:OLD.email_funzionale, :NEW.email_funzionale, 0, 1) = 1
-       OR DECODE(:OLD.telefono, :NEW.telefono, 0, 1) = 1
-       OR DECODE(:OLD.fatturato, :NEW.fatturato, 0, 1) = 1
-       OR DECODE(:OLD.bilancio, :NEW.bilancio, 0, 1) = 1
-       OR DECODE(:OLD.n_dipendenti, :NEW.n_dipendenti, 0, 1) = 1
-       OR DECODE(:OLD.tipo_soggetto_id, :NEW.tipo_soggetto_id, 0, 1) = 1
-    THEN
+    SELECT DECODE(:OLD.denominazione, :NEW.denominazione, 0, 1)
+           + DECODE(:OLD.indirizzo_sede_legale, :NEW.indirizzo_sede_legale, 0, 1)
+           + DECODE(:OLD.pec, :NEW.pec, 0, 1)
+           + DECODE(:OLD.email_funzionale, :NEW.email_funzionale, 0, 1)
+           + DECODE(:OLD.telefono, :NEW.telefono, 0, 1)
+           + DECODE(:OLD.fatturato, :NEW.fatturato, 0, 1)
+           + DECODE(:OLD.bilancio, :NEW.bilancio, 0, 1)
+           + DECODE(:OLD.n_dipendenti, :NEW.n_dipendenti, 0, 1)
+           + DECODE(:OLD.tipo_soggetto_id, :NEW.tipo_soggetto_id, 0, 1)
+    INTO v_cambiato FROM DUAL;
+
+    IF v_cambiato > 0 THEN
         INSERT INTO LogEstrazione (registro_tabella_id, record_id, utente, tipo_operazione)
         VALUES ((SELECT id FROM RegistroTabelle WHERE nome_tabella = 'SoggettoNIS'),
                 :OLD.id, USER, 'MODIFICA')
@@ -84,11 +85,14 @@ DECLARE
     v_log_id NUMBER;
     v_versione NUMBER;
     v_valido_da TIMESTAMP;
+    v_cambiato NUMBER;
 BEGIN
-    IF DECODE(:OLD.nome, :NEW.nome, 0, 1) = 1
-       OR DECODE(:OLD.soggetto_nis_id, :NEW.soggetto_nis_id, 0, 1) = 1
-       OR DECODE(:OLD.stato, :NEW.stato, 0, 1) = 1
-    THEN
+    SELECT DECODE(:OLD.nome, :NEW.nome, 0, 1)
+           + DECODE(:OLD.soggetto_nis_id, :NEW.soggetto_nis_id, 0, 1)
+           + DECODE(:OLD.stato, :NEW.stato, 0, 1)
+    INTO v_cambiato FROM DUAL;
+
+    IF v_cambiato > 0 THEN
         INSERT INTO LogEstrazione (registro_tabella_id, record_id, utente, tipo_operazione)
         VALUES ((SELECT id FROM RegistroTabelle WHERE nome_tabella = 'ElementoCritico'),
                 :OLD.id, USER, 'MODIFICA')
@@ -118,10 +122,13 @@ DECLARE
     v_log_id NUMBER;
     v_versione NUMBER;
     v_valido_da TIMESTAMP;
+    v_cambiato NUMBER;
 BEGIN
-    IF DECODE(:OLD.denominazione, :NEW.denominazione, 0, 1) = 1
-       OR DECODE(:OLD.paese_sede_legale, :NEW.paese_sede_legale, 0, 1) = 1
-    THEN
+    SELECT DECODE(:OLD.denominazione, :NEW.denominazione, 0, 1)
+           + DECODE(:OLD.paese_sede_legale, :NEW.paese_sede_legale, 0, 1)
+    INTO v_cambiato FROM DUAL;
+
+    IF v_cambiato > 0 THEN
         INSERT INTO LogEstrazione (registro_tabella_id, record_id, utente, tipo_operazione)
         VALUES ((SELECT id FROM RegistroTabelle WHERE nome_tabella = 'Fornitore'),
                 :OLD.id, USER, 'MODIFICA')
@@ -151,11 +158,14 @@ DECLARE
     v_log_id NUMBER;
     v_versione NUMBER;
     v_valido_da TIMESTAMP;
+    v_cambiato NUMBER;
 BEGIN
-    IF DECODE(:OLD.data_approvazione, :NEW.data_approvazione, 0, 1) = 1
-       OR DECODE(:OLD.approvato_da, :NEW.approvato_da, 0, 1) = 1
-       OR DECODE(:OLD.data_ultimo_riesame, :NEW.data_ultimo_riesame, 0, 1) = 1
-    THEN
+    SELECT DECODE(:OLD.data_approvazione, :NEW.data_approvazione, 0, 1)
+           + DECODE(:OLD.approvato_da, :NEW.approvato_da, 0, 1)
+           + DECODE(:OLD.data_ultimo_riesame, :NEW.data_ultimo_riesame, 0, 1)
+    INTO v_cambiato FROM DUAL;
+
+    IF v_cambiato > 0 THEN
         INSERT INTO LogEstrazione (registro_tabella_id, record_id, utente, tipo_operazione)
         VALUES ((SELECT id FROM RegistroTabelle WHERE nome_tabella = 'DocumentoGovernance'),
                 :OLD.id, USER, 'MODIFICA')
@@ -185,12 +195,15 @@ DECLARE
     v_log_id NUMBER;
     v_versione NUMBER;
     v_valido_da TIMESTAMP;
+    v_cambiato NUMBER;
 BEGIN
-    IF DECODE(:OLD.stato, :NEW.stato, 0, 1) = 1
-       OR DECODE(:OLD.responsabile_id, :NEW.responsabile_id, 0, 1) = 1
-       OR DECODE(:OLD.documento_evidenza_id, :NEW.documento_evidenza_id, 0, 1) = 1
-       OR DECODE(:OLD.note, :NEW.note, 0, 1) = 1
-    THEN
+    SELECT DECODE(:OLD.stato, :NEW.stato, 0, 1)
+           + DECODE(:OLD.responsabile_id, :NEW.responsabile_id, 0, 1)
+           + DECODE(:OLD.documento_evidenza_id, :NEW.documento_evidenza_id, 0, 1)
+           + DECODE(:OLD.note, :NEW.note, 0, 1)
+    INTO v_cambiato FROM DUAL;
+
+    IF v_cambiato > 0 THEN
         INSERT INTO LogEstrazione (registro_tabella_id, record_id, utente, tipo_operazione)
         VALUES ((SELECT id FROM RegistroTabelle WHERE nome_tabella = 'StatoAdempimentoRequisito'),
                 :OLD.id, USER, 'MODIFICA')
@@ -222,11 +235,14 @@ DECLARE
     v_log_id NUMBER;
     v_versione NUMBER;
     v_valido_da TIMESTAMP;
+    v_cambiato NUMBER;
 BEGIN
-    IF DECODE(:OLD.controparte, :NEW.controparte, 0, 1) = 1
-       OR DECODE(:OLD.descrizione, :NEW.descrizione, 0, 1) = 1
-       OR DECODE(:OLD.stato, :NEW.stato, 0, 1) = 1
-    THEN
+    SELECT DECODE(:OLD.controparte, :NEW.controparte, 0, 1)
+           + DECODE(:OLD.descrizione, :NEW.descrizione, 0, 1)
+           + DECODE(:OLD.stato, :NEW.stato, 0, 1)
+    INTO v_cambiato FROM DUAL;
+
+    IF v_cambiato > 0 THEN
         INSERT INTO LogEstrazione (registro_tabella_id, record_id, utente, tipo_operazione)
         VALUES ((SELECT id FROM RegistroTabelle WHERE nome_tabella = 'AccordoCondivisioneInformazioni'),
                 :OLD.id, USER, 'MODIFICA')
@@ -256,12 +272,15 @@ DECLARE
     v_log_id NUMBER;
     v_versione NUMBER;
     v_valido_da TIMESTAMP;
+    v_cambiato NUMBER;
 BEGIN
-    IF DECODE(:OLD.criterio_rilevanza, :NEW.criterio_rilevanza, 0, 1) = 1
-       OR DECODE(:OLD.tipologia_fornitura, :NEW.tipologia_fornitura, 0, 1) = 1
-       OR DECODE(:OLD.referente_contatto, :NEW.referente_contatto, 0, 1) = 1
-       OR DECODE(:OLD.stato, :NEW.stato, 0, 1) = 1
-    THEN
+    SELECT DECODE(:OLD.criterio_rilevanza, :NEW.criterio_rilevanza, 0, 1)
+           + DECODE(:OLD.tipologia_fornitura, :NEW.tipologia_fornitura, 0, 1)
+           + DECODE(:OLD.referente_contatto, :NEW.referente_contatto, 0, 1)
+           + DECODE(:OLD.stato, :NEW.stato, 0, 1)
+    INTO v_cambiato FROM DUAL;
+
+    IF v_cambiato > 0 THEN
         INSERT INTO LogEstrazione (registro_tabella_id, record_id, utente, tipo_operazione)
         VALUES ((SELECT id FROM RegistroTabelle WHERE nome_tabella = 'Dipendenza'),
                 :OLD.id, USER, 'MODIFICA')
@@ -291,8 +310,12 @@ DECLARE
     v_log_id NUMBER;
     v_versione NUMBER;
     v_valido_da TIMESTAMP;
+    v_cambiato NUMBER;
 BEGIN
-    IF DECODE(:OLD.stato, :NEW.stato, 0, 1) = 1 THEN
+    SELECT DECODE(:OLD.stato, :NEW.stato, 0, 1)
+    INTO v_cambiato FROM DUAL;
+
+    IF v_cambiato > 0 THEN
         INSERT INTO LogEstrazione (registro_tabella_id, record_id, utente, tipo_operazione)
         VALUES ((SELECT id FROM RegistroTabelle WHERE nome_tabella = 'AssetServizio'),
                 :OLD.id, USER, 'MODIFICA')
@@ -322,8 +345,12 @@ DECLARE
     v_log_id NUMBER;
     v_versione NUMBER;
     v_valido_da TIMESTAMP;
+    v_cambiato NUMBER;
 BEGIN
-    IF DECODE(:OLD.stato, :NEW.stato, 0, 1) = 1 THEN
+    SELECT DECODE(:OLD.stato, :NEW.stato, 0, 1)
+    INTO v_cambiato FROM DUAL;
+
+    IF v_cambiato > 0 THEN
         INSERT INTO LogEstrazione (registro_tabella_id, record_id, utente, tipo_operazione)
         VALUES ((SELECT id FROM RegistroTabelle WHERE nome_tabella = 'DocumentoGovernanceElementoCritico'),
                 :OLD.id, USER, 'MODIFICA')
