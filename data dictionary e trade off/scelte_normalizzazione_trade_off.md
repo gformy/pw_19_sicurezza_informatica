@@ -1,12 +1,5 @@
 # Scelte di normalizzazione e trade-off
 
-Schema DB NIS2/ACN — completa `data_dictionary.md` con la motivazione delle
-decisioni di modellazione prese, le alternative valutate e scartate, e i
-compromessi accettati consapevolmente. Fa riferimento ai pattern già
-introdotti nelle convenzioni del data dictionary (Pattern A/B, ISA,
-Opzione B).
-
----
 
 ## 1. Normalizzazione applicata
 
@@ -44,8 +37,11 @@ essenziali).
 
 **Alternative valutate**:
 | Opzione | Descrizione | Motivo di scarto |
+|---|---|---|
 | Colonne booleane ripetute | `applicabile_essenziali`, `applicabile_importanti` su ogni entità | Duplicazione strutturale dello stesso concetto su più tabelle |
+
 | Associazione polimorfica | Tabella `Applicabilita` con `entita_tipo` testuale + `entita_id` generico | `entita_id` non è una FK verificabile: nulla impedisce riferimenti a record inesistenti |
+
 
 **Scelta adottata**: lookup unica `TipoSoggettoNIS` (2 righe) + tabella
 ponte dedicata per ciascuna entità classificabile (`MisuraApplicabilita`,
@@ -75,6 +71,7 @@ di elemento dipendente.
 |---|---|---|
 | Due FK nullable su `Dipendenza` | `asset_id`, `servizio_id`, con CHECK di esclusione reciproca | Vincolo aggiuntivo da mantenere, non scala oltre due tipi |
 | Generalizzazione ISA (adottata) | `ElementoCritico` come superclasse, chiave primaria condivisa | — |
+
 
 **Scelta adottata**: `Asset` e `Servizio` come sottoclassi di
 `ElementoCritico` tramite class-table inheritance a chiave condivisa
@@ -110,12 +107,15 @@ uniforme di storicizzazione non è adatto a entrambi i casi.
 | Pattern | Applicato a | Meccanismo |
 |---|---|---|
 | **A — validità semplice** | `RequisitoMisura`, `MisuraSicurezza`, `TipoIncidente`, `TipoDocumentoGovernance`, `CategoriaIncidente` | Nuova riga alla revisione, nessun trigger: il cambiamento è un atto deliberato, mai un effetto collaterale automatico |
+
 | **B — storicizzazione piena** | `SoggettoNIS`, `Fornitore`, `ElementoCritico`, `DocumentoGovernance`, `StatoAdempimentoRequisito`, `AccordoCondivisioneInformazioni`, `Dipendenza`, `AssetServizio`, `DocumentoGovernanceElementoCritico` | Tabella `*Storico` gemella, popolata da trigger `BEFORE UPDATE` automatico e incondizionato |
+
 
 **Motivazione della dualità**: la struttura tecnica rispecchia la
 struttura giuridica della fonte del cambiamento. Per i dati normativi, un
 meccanismo automatico sarebbe concettualmente sbagliato, non solo
-superfluo — un cambiamento normativo non dovrebbe mai poter avvenire come
+superfluo.
+Un cambiamento normativo non dovrebbe mai poter avvenire come
 effetto collaterale silenzioso di un `UPDATE` qualunque. Per i dati
 operativi, l'automatismo incondizionato è invece necessario: affidarsi
 alla disciplina di chi esegue l'`UPDATE` per ricordarsi di storicizzare
@@ -127,12 +127,6 @@ carico cognitivo per chi manterrà lo schema in futuro, che deve
 riconoscere quale pattern si applica a quale tabella. Mitigato dalla
 distinzione esplicita nelle convenzioni del data dictionary.
 
-**Nota tecnica di conversione**: in Oracle il confronto tra valori
-vecchi e nuovi nei trigger di storicizzazione richiede
-`SELECT DECODE(...) INTO v_cambiato FROM DUAL` seguito da
-`IF v_cambiato > 0`, perché `DECODE` è una funzione SQL non utilizzabile
-direttamente in una condizione `IF` di puro PL/SQL (vedi
-`readme/ERRORI_RISOLTI.md`).
 
 ---
 
@@ -159,8 +153,9 @@ dedurre l'adempimento dell'inventario fornitori dalla sola esistenza di
 righe in `Fornitore`) da quelli verificabili solo manualmente.
 
 **Decisione finale**: nessuna distinzione. `StatoAdempimentoRequisito`
-tratta ogni attestazione allo stesso modo — una dichiarazione esplicita,
-con responsabile e data, con un'evidenza opzionale collegata tramite FK
+tratta ogni attestazione allo stesso modo 
+Una dichiarazione esplicita, con responsabile e data, 
+con un'evidenza opzionale collegata tramite FK
 diretta a `DocumentoGovernance`.
 
 **Motivazione**: molti requisiti restano di natura procedurale e non
@@ -179,7 +174,7 @@ più requisiti e un'azienda può averne attuati solo alcuni.
 
 ## 7. Confini di scope esplicitamente motivati
 
-Decisioni di esclusione, non di modellazione — incluse per completezza
+Decisioni di esclusione, non di modellazione incluse per completezza
 della documentazione.
 
 - **Classificazione del dato secondo ISO/IEC 27001:2022 (controllo
