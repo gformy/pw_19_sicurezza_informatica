@@ -1,21 +1,7 @@
 -- =====================================================================
 -- 06 — EXPORT CSV SU FILE LOCALE (UTL_FILE)
---
--- PREREQUISITO: UTL_FILE scrive sul FILE SYSTEM DEL SERVER ORACLE,
--- non sul client (DBeaver). Se l'istanza di test gira in locale sulla
--- stessa macchina, il percorso indicato nella DIRECTORY sottostante
--- è semplicemente una cartella del proprio PC; se l'istanza fosse
--- remota, il file comparirebbe sul server e non sul client - non è
--- il caso qui, ma va tenuto presente.
 -- =====================================================================
 
--- ---------------------------------------------------------------------
--- Directory Oracle: un oggetto che fa da alias a un percorso reale del
--- file system. Il percorso va adattato al proprio ambiente prima di
--- eseguire (qui un esempio per Windows; su Linux/Mac usare ad es.
--- '/home/utente/export_nis2').
--- Va creata da un utente con privilegio CREATE ANY DIRECTORY
--- (tipicamente SYSTEM), non dall'utente applicativo nis2_test.
 -- ---------------------------------------------------------------------
 CREATE OR REPLACE DIRECTORY export_dir AS 'C:\export_nis2';
 
@@ -196,8 +182,7 @@ END;
 
 
 -- ---------------------------------------------------------------------
--- 5) Procedura "regia": esegue tutte e quattro le esportazioni in
--- un'unica chiamata, per l'azienda indicata.
+-- 5) Esegue tutte e quattro le esportazioni in un'unica chiamata
 -- ---------------------------------------------------------------------
 CREATE OR REPLACE PROCEDURE sp_esporta_profilo_completo_csv(p_soggetto_id NUMBER) IS
 BEGIN
@@ -206,8 +191,3 @@ BEGIN
     sp_esporta_dipendenze_csv(p_soggetto_id);
     sp_esporta_puntidicontatto_csv(p_soggetto_id);
 END;
-
--- Esempio di chiamata (da eseguire come blocco anonimo in DBeaver):
--- BEGIN
---     sp_esporta_profilo_completo_csv(1);
--- END;

@@ -1,6 +1,6 @@
 -- =====================================================================
 -- 08 — TEST ISOLATO DEI 9 TRIGGER DI STORICIZZAZIONE
--- Da eseguire DOPO gli script 02, 03, 04.
+-- 
 --
 -- Dataset indipendente dal file 07 (codice fiscale diverso: 99999999999),
 -- per non entrare in conflitto con dati parziali già presenti in caso
@@ -10,9 +10,6 @@
 --   (a) creazione della riga minima necessaria
 --   (b) UPDATE che dovrebbe attivare il trigger
 --   (c) SELECT di verifica che mostra la riga storicizzata
--- Eseguire un blocco alla volta, verificando l'esito di ciascuno prima
--- di passare al successivo: se un trigger fallisce, ORA-04098 indicherà
--- con precisione quale, senza dover risalire da un errore generico.
 -- =====================================================================
 
 
@@ -105,8 +102,6 @@ WHERE documento_id = (
 -- =======================================================================
 -- TRIGGER 5/9 — trg_storico_statoadempimento
 -- PREREQUISITO: richiede che RequisitoMisura contenga almeno una riga.
--- Se non è ancora stato eseguito FINALE_07 (Parte A), scommentare le
--- due INSERT seguenti per crearne una minima qui:
 -- =======================================================================
 -- INSERT INTO MisuraSicurezza (codice, categoria, descrizione)
 -- VALUES ('TEST-01', 'Categoria di prova', 'Misura di prova per test trigger');
@@ -248,7 +243,7 @@ WHERE documento_elemento_id = (
 
 -- =======================================================================
 -- RIEPILOGO FINALE: conta quante tabelle *Storico hanno righe per
--- questo soggetto di test. Atteso: 9 su 9 con almeno 1 riga.
+-- questo soggetto di test. 
 -- =======================================================================
 SELECT 'SoggettoNISStorico' AS tabella, COUNT(*) AS righe FROM SoggettoNISStorico
 WHERE soggetto_nis_id = (SELECT id FROM SoggettoNIS WHERE codice_fiscale = '99999999999')

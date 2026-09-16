@@ -19,6 +19,3 @@ GRANT CREATE SEQUENCE TO nis2_test;
 GRANT CREATE VIEW TO nis2_test;
 GRANT CREATE TRIGGER TO nis2_test;
 GRANT CREATE PROCEDURE TO nis2_test;
-
--- A questo punto, in DBeaver, disconnettiti e riconnettiti come
--- nis2_test / Password impostata 

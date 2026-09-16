@@ -68,8 +68,6 @@ ORDER BY pc.ruolo;
 
 -- =====================================================================
 -- Varianti "AS OF" — stessa estrazione, riferita a un invio storico
--- (riusano le viste del Blocco 7/8: nessuna nuova query da scrivere,
--- solo un filtro diverso sulla stessa infrastruttura)
 -- =====================================================================
 
 -- Asset/servizi dichiarati in un invio specifico

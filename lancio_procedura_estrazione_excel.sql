@@ -10,11 +10,6 @@
 --
 --    CREATE OR REPLACE DIRECTORY export_dir AS 'C:\export_nis2';
 --    GRANT READ, WRITE ON DIRECTORY export_dir TO nis2_test;
---
--- NOTA: una sotto-query (SELECT ...) non può essere passata come
--- argomento diretto a una procedura in un blocco PL/SQL: è un
--- costrutto valido solo dentro istruzioni SQL vere. Va prima
--- assegnata a una variabile con SELECT ... INTO.
 -- =====================================================================
 
 DECLARE

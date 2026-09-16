@@ -4,32 +4,11 @@
 -- popolamento_dati_misure.sql, viste.sql, trigger.sql.
 --
 -- Scenario: soggetto NIS essenziale nel settore della distribuzione
--- elettrica, usato anche come caso d'uso nella tesi (§6). Copre tutte
--- le macro-aree: anagrafica, asset/servizio (via viste ISA), fornitore
--- con dipendenza, governance con attestazione, incidente completo con
--- notifiche, due InvioACN in momenti diversi per dimostrare la
--- ricostruzione point-in-time.
+-- elettrica. Copre tutte le macro-aree
+-- completo con notifiche, due InvioACN in momenti diversi per 
+-- dimostrare la ricostruzione point-in-time.
 --
--- Solo INSERT/UPDATE semplici, nessun blocco PL/SQL: ogni riferimento
--- a una riga già inserita è risolto con una sotto-query su un
--- attributo univoco (codice fiscale, nome, data), non su id numerici.
--- Le date di InvioACN usano SYSTIMESTAMP (non date fisse nel passato),
--- per restare sempre coerenti con il momento reale di esecuzione.
 -- =====================================================================
-
---
--- Solo INSERT/UPDATE semplici, nessun blocco PL/SQL: ogni riferimento
--- a una riga già inserita è risolto con una sotto-query su un
--- attributo univoco (codice fiscale, nome, data), non su id numerici.
--- Le date di InvioACN usano SYSTIMESTAMP (non date fisse nel passato),
--- per restare sempre coerenti con il momento reale di esecuzione.
--- =====================================================================
-
--- PARTE B — Popolamento dati applicativi (solo INSERT/UPDATE semplici,
--- nessun blocco PL/SQL: ogni riferimento a una riga inserita in
--- precedenza è risolto con una sotto-query su un attributo univoco
--- (codice fiscale, nome, codice), non con variabili incatenate).
--- ---------------------------------------------------------------------
 
 -- === Anagrafica ===
 INSERT INTO SoggettoNIS (codice_fiscale, denominazione, indirizzo_sede_legale,
@@ -267,7 +246,7 @@ VALUES (
 
 
 -- ---------------------------------------------------------------------
--- PARTE C — Query dimostrative
+-- PARTE C — 
 -- Da eseguire dopo il blocco sopra, per verificare visivamente che
 -- tutto funzioni come descritto nel README e in tesi.
 -- ---------------------------------------------------------------------

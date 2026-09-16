@@ -2,6 +2,8 @@
 -- Oracle di RAISE EXCEPTION; il codice (-20001) è nell'intervallo
 -- riservato agli errori applicativi definiti dall'utente.
 
+ 
+-- Impedisce il DELETE fisico su ElementoCritico, per preservare lo storico
 CREATE OR REPLACE TRIGGER trg_blocca_delete_elementocritico
 BEFORE DELETE ON ElementoCritico
 FOR EACH ROW
@@ -9,7 +11,7 @@ BEGIN
     RAISE_APPLICATION_ERROR(-20001,
         'DELETE non consentito su ElementoCritico: usare UPDATE stato=''DISMESSO'' per preservare lo storico');
 END;
-
+-- Impedisce il DELETE fisico su Asset, per preservare lo storico
 CREATE OR REPLACE TRIGGER trg_blocca_delete_asset
 BEFORE DELETE ON Asset
 FOR EACH ROW
@@ -17,7 +19,7 @@ BEGIN
     RAISE_APPLICATION_ERROR(-20001,
         'DELETE non consentito su Asset: usare UPDATE stato=''DISMESSO'' su ElementoCritico per preservare lo storico');
 END;
-
+-- Impedisce il DELETE fisico su Servizio, per preservare lo storico
 CREATE OR REPLACE TRIGGER trg_blocca_delete_servizio
 BEFORE DELETE ON Servizio
 FOR EACH ROW
@@ -57,9 +59,6 @@ BEGIN
         SELECT NVL(MAX(versione), 0) + 1 INTO v_versione
         FROM SoggettoNISStorico WHERE soggetto_nis_id = :OLD.id;
 
-        -- corregge il bug individuato in fase di conversione (vedi nota
-        -- a inizio Blocco 8): valido_da è la fine della versione
-        -- precedente, non sempre la data di creazione originale
         SELECT NVL(MAX(valido_a), :OLD.data_creazione) INTO v_valido_da
         FROM SoggettoNISStorico WHERE soggetto_nis_id = :OLD.id;
 

@@ -9,10 +9,6 @@
 -- completo dei 116 requisiti dell'Allegato 2.
 -- =====================================================================
 
--- PARTE A — Completamento tabelle normative non ancora popolate
--- Sottoinsieme rappresentativo (non l'elenco completo dei 116
--- requisiti dell'Allegato 2), sufficiente per un test funzionale.
--- ---------------------------------------------------------------------
 
 INSERT INTO MisuraSicurezza (codice, categoria, descrizione) VALUES
     ('GV.SC-04', 'Gestione del rischio della catena di approvvigionamento',
